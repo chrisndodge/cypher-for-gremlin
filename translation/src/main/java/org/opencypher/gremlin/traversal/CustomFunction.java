@@ -177,6 +177,13 @@ public class CustomFunction {
         );
     }
 
+    public static CustomFunction cypherUtcNow() {
+        return new CustomFunction(
+            "cypherUtcNow",
+            CustomFunctions.cypherUtcNow()
+        );
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

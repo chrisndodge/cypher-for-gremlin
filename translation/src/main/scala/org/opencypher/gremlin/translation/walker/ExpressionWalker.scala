@@ -253,6 +253,7 @@ private class ExpressionWalker[T, P](context: WalkerContext[T, P], g: GremlinSte
           case "tointeger"        => traversals.head.map(CustomFunction.cypherToInteger())
           case "tostring"         => traversals.head.map(CustomFunction.cypherToString())
           case "gremlin"          => injectGremlin(args)
+          case "utcnow"           => traversals.head.map(CustomFunction.cypherUtcNow())
           case _ =>
             throw new SyntaxException(s"Unknown function '$fnName'")
         }

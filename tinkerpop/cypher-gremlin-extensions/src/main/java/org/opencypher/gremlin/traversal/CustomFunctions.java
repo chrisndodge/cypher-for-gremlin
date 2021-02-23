@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.time.Instant
+import java.time.Instant;
 import org.apache.tinkerpop.gremlin.process.traversal.Traverser;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -493,7 +493,7 @@ public final class CustomFunctions {
     *
     */
     public static Function<Traverser,Object> cypherUtcNow() {
-        return cypherFunction(a -> (Date.from(Instant.now()), Date.class);
+        return cypherFunction(a -> (Date.from(Instant.now())), Date.class);
     }    
 
 }
