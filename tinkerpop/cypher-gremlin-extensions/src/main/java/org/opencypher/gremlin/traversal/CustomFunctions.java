@@ -498,7 +498,7 @@ public final class CustomFunctions {
     */
     public static Function<Traverser,Object> cypherUtcNow() {
         return traverser -> {
-            Date.from(Instant.now());
+            return Date.from(Instant.now());
         };
     }    
 
