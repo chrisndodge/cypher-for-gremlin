@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.time.Instant
 import org.apache.tinkerpop.gremlin.process.traversal.Traverser;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -442,10 +444,6 @@ public final class CustomFunctions {
         };
     }
 
-    public static Function<Traverser,Object> cypherTrim() {
-        return cypherFunction(a -> ((String) a.get(0)).trim(), String.class);
-    }
-
     public static Function<Traverser, Object> cypherToUpper() {
         return cypherFunction(a -> ((String) a.get(0)).toUpperCase(), String.class);
     }
@@ -487,4 +485,15 @@ public final class CustomFunctions {
                 o, clazz.getSimpleName(), o.getClass().getSimpleName()));
         }
     }
+
+
+    /*
+    *
+    * SAMOS SPECIFIC DATE/TIME CUSTOM FUNCTIONS
+    *
+    */
+    public static Function<Traverser,Object> cypherUtcNow() {
+        return cypherFunction(a -> (Date.from(Instant.now()), Date.class);
+    }    
+
 }
