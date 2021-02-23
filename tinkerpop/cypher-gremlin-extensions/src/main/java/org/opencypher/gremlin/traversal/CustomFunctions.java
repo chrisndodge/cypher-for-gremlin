@@ -444,6 +444,10 @@ public final class CustomFunctions {
         };
     }
 
+    public static Function<Traverser,Object> cypherTrim() {
+        return cypherFunction(a -> ((String) a.get(0)).trim(), String.class);
+    }
+
     public static Function<Traverser, Object> cypherToUpper() {
         return cypherFunction(a -> ((String) a.get(0)).toUpperCase(), String.class);
     }
