@@ -19,7 +19,10 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -499,6 +502,22 @@ public final class CustomFunctions {
         return traverser -> {
             return Date.from(Instant.now());
         };
+    }
+
+    
+    /*public static Function<Traverser,Object> cypherYear() {
+        return cypherFunction(a -> {
+            //LocalDate localDate = ((Date) a).toInstant().atZone(ZoneId.of("UTC")).toLocalDate();
+            //return localDate.getYear();
+            return Integer.parseInt((new SimpleDateFormat("YYYY")).format((Date) a));
+        }, Date.class);
+    }*/
+
+    public static Function<Traverser,Object> cypherYear() {
+        return cypherFunction(
+            a -> Integer.parseInt((new SimpleDateFormat("YYYY")).format((Date) a)), 
+            Date.class
+        );
     }
 
 }

@@ -254,6 +254,12 @@ private class ExpressionWalker[T, P](context: WalkerContext[T, P], g: GremlinSte
           case "tostring"         => traversals.head.map(CustomFunction.cypherToString())
           case "gremlin"          => injectGremlin(args)
           case "utcnow"           => traversals.head.map(CustomFunction.cypherUtcNow())
+          case "year"             => traversals.head.map(CustomFunction.cypherYear())
+          //case "month"            => traversals.head.map(CustomFunction.cypherMonth())
+          //case "day"              => traversals.head.map(CustomFunction.cypherDay())
+          //case "hour"             => traversals.head.map(CustomFunction.cypherHour())
+          //case "minute"           => traversals.head.map(CustomFunction.cypherMinute())
+          //case "second"           => traversals.head.map(CustomFunction.cypherSecond())
           case _ =>
             throw new SyntaxException(s"Unknown function '$fnName'")
         }

@@ -184,6 +184,50 @@ public class CustomFunction {
         );
     }
 
+    public static CustomFunction cypherYear() {
+        return new CustomFunction(
+            "cypherYear",
+            CustomFunctions.cypherYear()
+        );
+    }
+
+    /*
+    public static CustomFunction cypherMonth() {
+        return new CustomFunction(
+            "cypherMonth",
+            CustomFunctions.cypherMonth()
+        );
+    }
+
+    public static CustomFunction cypherDay() {
+        return new CustomFunction(
+            "cypherDay",
+            CustomFunctions.cypherDay()
+        );
+    }
+
+    public static CustomFunction cypherHour() {
+        return new CustomFunction(
+            "cypherHour",
+            CustomFunctions.cypherHour()
+        );
+    }
+
+    public static CustomFunction cypherMinute() {
+        return new CustomFunction(
+            "cypherMinute",
+            CustomFunctions.cypherMiinute()
+        );
+    }
+
+    public static CustomFunction cypherSecond() {
+        return new CustomFunction(
+            "cypherSecond",
+            CustomFunctions.cypherSecond()
+        );
+    }
+    */
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
