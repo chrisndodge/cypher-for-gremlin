@@ -515,7 +515,7 @@ public final class CustomFunctions {
 
     public static Function<Traverser,Object> cypherYear() {
         return cypherFunction(
-            a -> Integer.parseInt((new SimpleDateFormat("YYYY")).format((Date) a)), 
+            a -> Integer.parseInt((new SimpleDateFormat("YYYY")).format((Date) a.get(0))), 
             Date.class
         );
     }
