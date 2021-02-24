@@ -550,7 +550,7 @@ public final class CustomFunctions {
 
     public static Function<Traverser,Object> cypherDuration() {
         return traverser -> {
-            Integer seconds = (Integer) traverser.get();
+            Long seconds = (Long) traverser.get();
 
             return Duration.ofSeconds(seconds);
         };
@@ -563,23 +563,23 @@ public final class CustomFunctions {
                 throw new TypeException("Incorrect number of arguments. Usage: dateadd(date, years, months, days, hours, minutes, seconds)");
             }
             Date theDate = (Date) args.get(0);
-            Integer years = (Integer) args.get(1);
-            Integer months = (Integer) args.get(2);
-            Integer days = (Integer) args.get(3);
-            Integer hours = (Integer) args.get(4);
-            Integer minutes = (Integer) args.get(5);
-            Integer seconds = (Integer) args.get(6);
+            Long years = (Long) args.get(1);
+            Long months = (Long) args.get(2);
+            Long days = (Long) args.get(3);
+            Long hours = (Long) args.get(4);
+            Long minutes = (Long) args.get(5);
+            Long seconds = (Long) args.get(6);
 
             Calendar c = Calendar.getInstance();
             c.setTime(theDate);
 
             // Perform addition/subtraction
-            c.add(Calendar.YEAR, years);
-            c.add(Calendar.MONTH, months);
-            c.add(Calendar.DATE, days);
-            c.add(Calendar.HOUR, hours);
-            c.add(Calendar.MINUTE, minutes);
-            c.add(Calendar.SECOND, seconds);
+            c.add(Calendar.YEAR, years.intValue());
+            c.add(Calendar.MONTH, months.intValue());
+            c.add(Calendar.DATE, days.intValue());
+            c.add(Calendar.HOUR, hours.intValue());
+            c.add(Calendar.MINUTE, minutes.intValue());
+            c.add(Calendar.SECOND, seconds.intValue());
 
             // Convert calendar back to Date
             return c.getTime();
