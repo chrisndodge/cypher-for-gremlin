@@ -191,7 +191,7 @@ public class CustomFunction {
         );
     }
 
-    /*
+    
     public static CustomFunction cypherMonth() {
         return new CustomFunction(
             "cypherMonth",
@@ -216,7 +216,7 @@ public class CustomFunction {
     public static CustomFunction cypherMinute() {
         return new CustomFunction(
             "cypherMinute",
-            CustomFunctions.cypherMiinute()
+            CustomFunctions.cypherMinute()
         );
     }
 
@@ -226,7 +226,7 @@ public class CustomFunction {
             CustomFunctions.cypherSecond()
         );
     }
-    */
+    
 
     @Override
     public boolean equals(Object o) {

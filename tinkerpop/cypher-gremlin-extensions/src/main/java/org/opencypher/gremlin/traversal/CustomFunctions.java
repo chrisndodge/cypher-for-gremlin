@@ -520,4 +520,39 @@ public final class CustomFunctions {
         );
     }
 
+    public static Function<Traverser,Object> cypherMonth() {
+        return cypherFunction(
+            a -> Integer.parseInt((new SimpleDateFormat("MM")).format((Date) a.get(0))), 
+            Date.class
+        );
+    }
+
+    public static Function<Traverser,Object> cypherDay() {
+        return cypherFunction(
+            a -> Integer.parseInt((new SimpleDateFormat("DD")).format((Date) a.get(0))), 
+            Date.class
+        );
+    }
+
+    public static Function<Traverser,Object> cypherHour() {
+        return cypherFunction(
+            a -> Integer.parseInt((new SimpleDateFormat("HH")).format((Date) a.get(0))), 
+            Date.class
+        );
+    }
+
+    public static Function<Traverser,Object> cypherMinute() {
+        return cypherFunction(
+            a -> Integer.parseInt((new SimpleDateFormat("mm")).format((Date) a.get(0))), 
+            Date.class
+        );
+    }
+
+    public static Function<Traverser,Object> cypherSecond() {
+        return cypherFunction(
+            a -> Integer.parseInt((new SimpleDateFormat("ss")).format((Date) a.get(0))), 
+            Date.class
+        );
+    }
+
 }
