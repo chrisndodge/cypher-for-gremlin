@@ -120,6 +120,13 @@ public class CustomFunction {
         );
     }
 
+    public static CustomFunction cypherMinus() {
+        return new CustomFunction(
+            "cypherMinus",
+            CustomFunctions.cypherMinus()
+        );
+    }
+
     public static CustomFunction cypherException() {
         return new CustomFunction(
             "cypherException",
@@ -184,6 +191,20 @@ public class CustomFunction {
         );
     }
 
+    public static CustomFunction cypherDuration() {
+        return new CustomFunction(
+            "cypherDuration",
+            CustomFunctions.cypherDuration()
+        );
+    }
+
+    public static CustomFunction cypherDateAdd() {
+        return new CustomFunction(
+            "cypherDateAdd",
+            CustomFunctions.cypherDateAdd()
+        );
+    }
+
     public static CustomFunction cypherYear() {
         return new CustomFunction(
             "cypherYear",
@@ -203,6 +224,13 @@ public class CustomFunction {
         return new CustomFunction(
             "cypherDay",
             CustomFunctions.cypherDay()
+        );
+    }
+
+    public static CustomFunction cypherDayOfYear() {
+        return new CustomFunction(
+            "cypherDayOfYear",
+            CustomFunctions.cypherDayOfYear()
         );
     }
 

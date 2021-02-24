@@ -20,10 +20,13 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -45,6 +48,14 @@ import org.opencypher.gremlin.translation.exception.TypeException;
 
 @SuppressWarnings({"unchecked", "WeakerAccess", "ArraysAsListWithZeroOrOneArgument"})
 public final class CustomFunctions {
+    private static SimpleDateFormat yearDateFormat = new SimpleDateFormat("YYYY");
+    private static SimpleDateFormat monthDateFormat = new SimpleDateFormat("MM");
+    private static SimpleDateFormat dayDateFormat = new SimpleDateFormat("dd");
+    private static SimpleDateFormat dayOfYearDateFormat = new SimpleDateFormat("DD");
+    private static SimpleDateFormat hourDateFormat = new SimpleDateFormat("HH");
+    private static SimpleDateFormat minuteDateFormat = new SimpleDateFormat("mm");
+    private static SimpleDateFormat secondDateFormat = new SimpleDateFormat("ss");
+
     private CustomFunctions() {
     }
 
@@ -365,6 +376,10 @@ public final class CustomFunctions {
                 return objects;
             }
 
+            if (a instanceof Date && b instanceof Duration) {
+                return Date.from(((Date)a).toInstant().plus(((Duration)b).toMillis()/1000, ChronoUnit.SECONDS));
+            }
+
             if (!(a instanceof String || a instanceof Number) ||
                 !(b instanceof String || b instanceof Number)) {
                 throw new TypeException("Illegal use of plus operator");
@@ -380,6 +395,35 @@ public final class CustomFunctions {
             } else {
                 return String.valueOf(a) + String.valueOf(b);
             }
+        };
+    }
+
+    public static Function<Traverser, Object> cypherMinus() {
+        return traverser -> {
+            List<?> args = (List<?>) traverser.get();
+            Object a = args.get(0);
+            Object b = args.get(1);
+
+            // right now we only extend the minus operator to cover date - duration types
+            if (a instanceof Date && b instanceof Duration) {
+                return Date.from(((Date)a).toInstant().minus(((Duration)b).toMillis()/1000, ChronoUnit.SECONDS));
+            }
+
+            if (!(a instanceof String || a instanceof Number) ||
+                !(b instanceof String || b instanceof Number)) {
+                throw new TypeException("Illegal use of minus operator");
+            }
+
+            if (a instanceof Number && b instanceof Number) {
+                if (a instanceof Double || b instanceof Double ||
+                    a instanceof Float || b instanceof Float) {
+                    return ((Number) a).doubleValue() - ((Number) b).doubleValue();
+                } else {
+                    return ((Number) a).longValue() - ((Number) b).longValue();
+                }
+            }
+
+            throw new TypeException("Illegal use of minus operator");
         };
     }
 
@@ -504,53 +548,101 @@ public final class CustomFunctions {
         };
     }
 
+    public static Function<Traverser,Object> cypherDuration() {
+        return traverser -> {
+            List<?> args = (List<?>) traverser.get();
+            if (args.size() != 1) {
+                throw new TypeException("Incorrect number of arguments. Usage: duration(seconds)");
+            }
+            Integer seconds = (Integer) args.get(0);
+
+            return Duration.ofSeconds(seconds);
+        };
+    }
+
+    public static Function<Traverser,Object> cypherDateAdd() {
+        return traverser -> {
+            List<?> args = (List<?>) traverser.get();
+            if (args.size() != 7) {
+                throw new TypeException("Incorrect number of arguments. Usage: dateadd(date, years, months, days, hours, minutes, seconds)");
+            }
+            Date theDate = (Date) args.get(0);
+            Integer years = (Integer) args.get(1);
+            Integer months = (Integer) args.get(2);
+            Integer days = (Integer) args.get(3);
+            Integer hours = (Integer) args.get(4);
+            Integer minutes = (Integer) args.get(5);
+            Integer seconds = (Integer) args.get(6);
+
+            Calendar c = Calendar.getInstance();
+            c.setTime(theDate);
+
+            // Perform addition/subtraction
+            c.add(Calendar.YEAR, years);
+            c.add(Calendar.MONTH, months);
+            c.add(Calendar.DATE, days);
+            c.add(Calendar.HOUR, hours);
+            c.add(Calendar.MINUTE, minutes);
+            c.add(Calendar.SECOND, seconds);
+
+            // Convert calendar back to Date
+            return c.getTime();
+        };
+    }
+
     
     /*public static Function<Traverser,Object> cypherYear() {
         return cypherFunction(a -> {
-            //LocalDate localDate = ((Date) a).toInstant().atZone(ZoneId.of("UTC")).toLocalDate();
-            //return localDate.getYear();
-            return Integer.parseInt((new SimpleDateFormat("YYYY")).format((Date) a));
+            LocalDate localDate = ((Date) a).toInstant().atZone(ZoneId.of("UTC")).toLocalDate();
+            return localDate.getYear();
         }, Date.class);
     }*/
 
     public static Function<Traverser,Object> cypherYear() {
         return cypherFunction(
-            a -> Integer.parseInt((new SimpleDateFormat("YYYY")).format((Date) a.get(0))), 
+            a -> CustomFunctions.yearDateFormat.format((Date) a.get(0)), 
             Date.class
         );
     }
 
     public static Function<Traverser,Object> cypherMonth() {
         return cypherFunction(
-            a -> Integer.parseInt((new SimpleDateFormat("MM")).format((Date) a.get(0))), 
+            a -> CustomFunctions.monthDateFormat.format((Date) a.get(0)), 
             Date.class
         );
     }
 
     public static Function<Traverser,Object> cypherDay() {
         return cypherFunction(
-            a -> Integer.parseInt((new SimpleDateFormat("DD")).format((Date) a.get(0))), 
+            a -> CustomFunctions.dayDateFormat.format((Date) a.get(0)), 
+            Date.class
+        );
+    }
+
+    public static Function<Traverser,Object> cypherDayOfYear() {
+        return cypherFunction(
+            a -> CustomFunctions.dayOfYearDateFormat.format((Date) a.get(0)), 
             Date.class
         );
     }
 
     public static Function<Traverser,Object> cypherHour() {
         return cypherFunction(
-            a -> Integer.parseInt((new SimpleDateFormat("HH")).format((Date) a.get(0))), 
+            a -> CustomFunctions.hourDateFormat.format((Date) a.get(0)), 
             Date.class
         );
     }
 
     public static Function<Traverser,Object> cypherMinute() {
         return cypherFunction(
-            a -> Integer.parseInt((new SimpleDateFormat("mm")).format((Date) a.get(0))), 
+            a -> CustomFunctions.minuteDateFormat.format((Date) a.get(0)), 
             Date.class
         );
     }
 
     public static Function<Traverser,Object> cypherSecond() {
         return cypherFunction(
-            a -> Integer.parseInt((new SimpleDateFormat("ss")).format((Date) a.get(0))), 
+            a -> CustomFunctions.secondDateFormat.format((Date) a.get(0)), 
             Date.class
         );
     }

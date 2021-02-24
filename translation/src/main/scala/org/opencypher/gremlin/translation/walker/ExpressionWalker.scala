@@ -15,6 +15,9 @@
  */
 package org.opencypher.gremlin.translation.walker
 
+import java.time.Duration;
+import java.util.Date;
+
 import org.apache.tinkerpop.gremlin.process.traversal.Scope
 import org.apache.tinkerpop.gremlin.process.traversal.step.TraversalOptionParent.Pick
 import org.apache.tinkerpop.gremlin.structure.Column.keys
@@ -177,7 +180,17 @@ private class ExpressionWalker[T, P](context: WalkerContext[T, P], g: GremlinSte
             asList(lhs, rhs).map(CustomFunction.cypherPlus())
         }
 
-      case Subtract(lhs, rhs) => math(lhs, rhs, "-")
+      // TODO: Remove comment out code
+      //case Subtract(lhs, rhs) => math(lhs, rhs, "-")
+
+      case Subtract(lhs, rhs) =>
+        (typeOf(lhs), typeOf(rhs)) match {
+          case (_: IntegerType, _: IntegerType) =>
+            math(lhs, rhs, "-")
+          case _ =>
+            asList(lhs, rhs).map(CustomFunction.cypherMinus())
+        }
+
       case Multiply(lhs, rhs) => math(lhs, rhs, "*")
       case Divide(lhs, rhs)   => math(lhs, rhs, "/")
       case Pow(lhs, rhs)      => math(lhs, rhs, "^")
@@ -257,9 +270,12 @@ private class ExpressionWalker[T, P](context: WalkerContext[T, P], g: GremlinSte
           case "year"             => traversals.head.map(CustomFunction.cypherYear())
           case "month"            => traversals.head.map(CustomFunction.cypherMonth())
           case "day"              => traversals.head.map(CustomFunction.cypherDay())
+          case "dayofyear"        => traversals.head.map(CustomFunction.cypherDayOfYear())
           case "hour"             => traversals.head.map(CustomFunction.cypherHour())
           case "minute"           => traversals.head.map(CustomFunction.cypherMinute())
           case "second"           => traversals.head.map(CustomFunction.cypherSecond())
+          case "dateadd"          => traversals.head.map(CustomFunction.cypherDateAdd())
+          case "duration"         => traversals.head.map(CustomFunction.cypherDuration())
           case _ =>
             throw new SyntaxException(s"Unknown function '$fnName'")
         }
