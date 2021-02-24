@@ -550,11 +550,7 @@ public final class CustomFunctions {
 
     public static Function<Traverser,Object> cypherDuration() {
         return traverser -> {
-            List<?> args = (List<?>) traverser.get();
-            if (args.size() != 1) {
-                throw new TypeException("Incorrect number of arguments. Usage: duration(seconds)");
-            }
-            Integer seconds = (Integer) args.get(0);
+            Integer seconds = (Integer) traverser.get();
 
             return Duration.ofSeconds(seconds);
         };
