@@ -19,6 +19,7 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +32,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.time.Instant;
 import org.apache.tinkerpop.gremlin.process.traversal.Traverser;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -490,7 +490,6 @@ public final class CustomFunctions {
         }
     }
 
-
     /*
     *
     * SAMOS SPECIFIC DATE/TIME CUSTOM FUNCTIONS
@@ -500,6 +499,6 @@ public final class CustomFunctions {
         return traverser -> {
             return Date.from(Instant.now());
         };
-    }    
+    }
 
 }
