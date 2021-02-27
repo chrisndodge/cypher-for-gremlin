@@ -643,4 +643,50 @@ public final class CustomFunctions {
         );
     }
 
+    public static Function<Traverser,Object> cypherTruncateDate() {
+        return traverser -> {
+            List<?> args = (List<?>) traverser.get();
+            if (args.size() != 2) {
+                throw new TypeException("Incorrect number of arguments. Usage: TRUNCATE_DATE(date, resolution)");
+            }
+            Date inDate = (Date) args.get(0);
+            String resolution = ((String) args.get(1)).toLowerCase();
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(inDate);
+            cal.set(Calendar.MILLISECOND, 0); // always to ms at least
+
+            if (resolution.equals("second")) {
+                return cal.getTime();
+            }
+
+            cal.set(Calendar.SECOND, 0);
+            if (resolution.equals("minute")) {
+                return cal.getTime();
+            }
+
+            cal.set(Calendar.MINUTE, 0);
+            if (resolution.equals("hour")) {
+                return cal.getTime();
+            }
+
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            if (resolution.equals("day")) {
+                return cal.getTime();
+            }
+
+            cal.set(Calendar.DAY_OF_MONTH, 1);
+            if (resolution.equals("month")) {
+                return cal.getTime();
+            }
+
+            cal.set(Calendar.MONTH, 0);
+            if (resolution.equals("year")) {
+                return cal.getTime();
+            }
+
+            throw new TypeException("TRUNCATE_DATE resolution must be one of 'second', 'minute', 'hour', 'day', 'month', 'year'");
+        };
+    }
+
 }

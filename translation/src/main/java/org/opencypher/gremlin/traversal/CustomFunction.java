@@ -255,6 +255,13 @@ public class CustomFunction {
         );
     }
     
+    public static CustomFunction cypherTruncateDate() {
+        return new CustomFunction(
+            "cypherTruncateDate",
+            CustomFunctions.cypherTruncateDate()
+        );
+    }
+
 
     @Override
     public boolean equals(Object o) {
