@@ -548,11 +548,39 @@ public final class CustomFunctions {
         };
     }
 
+    private static <K, V> V getOrDefault(Map<K,V> map, K key, V defaultValue) {
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+
     public static Function<Traverser,Object> cypherDuration() {
         return traverser -> {
-            Long seconds = (Long) traverser.get();
+            Object arg = traverser.get();
+            String isoDuration = "";
+            if (arg instanceof String) {
+                isoDuration = (String)arg;
+            } else if (arg instanceof Map<?, ?>) {
+                Map<String, Long> map = (Map<String, Long>) arg;
+                Long weeks = map.containsKey("weeks") ? map.get("weeks") : 0L;
+                if (weeks > 0) {
+                    isoDuration = String.format("P%dW", weeks);
+                } else {
+                    Long years = map.containsKey("years") ? map.get("years") : 0L;
+                    Long months = map.containsKey("months") ? map.get("months") : 0L;
+                    Long days = map.containsKey("days") ? map.get("days") : 0L;
+                    Long hours = map.containsKey("hours") ? map.get("hours") : 0L;
+                    Long minutes = map.containsKey("minutes") ? map.get("minutes") : 0L;
+                    Long seconds = map.containsKey("seconds") ? map.get("seconds") : 0L;
+                    Long milliseconds = map.containsKey("milliseconds") ? map.get("milliseconds") : 0L;
+                    Long microseconds = map.containsKey("microseconds") ? map.get("microseconds") : 0L;
+                    Long nanoseconds = map.containsKey("nanoseconds") ? map.get("nanoseconds") : 0L;
 
-            return Duration.ofSeconds(seconds);
+                    Double msFloat = milliseconds.doubleValue() + (microseconds.doubleValue() / 1000.0D) + (nanoseconds.doubleValue() / (1000.0D * 1000.0D));
+
+                    isoDuration = String.format("P%dY%dM%dT%dH%dM%d.%dS", years, months, days, hours, minutes, seconds, msFloat);
+                }
+            }
+
+            return Duration.parse(isoDuration);
         };
     }
 
