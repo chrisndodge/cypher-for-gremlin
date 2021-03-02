@@ -574,12 +574,11 @@ public final class CustomFunctions {
                     Long microseconds = map.containsKey("microseconds") ? map.get("microseconds") : 0L;
                     Long nanoseconds = map.containsKey("nanoseconds") ? map.get("nanoseconds") : 0L;
 
-                    Double secFractional = seconds.doubleValue() + 
-                        (milliseconds.doubleValue() / 1000.0D) + 
+                    Double secFractional = (milliseconds.doubleValue() / 1000.0D) + 
                         (microseconds.doubleValue() / (1000.0D * 1000.0D)) + 
                         (nanoseconds.doubleValue() / (1000.0D * 1000.0D * 1000.0D));
 
-                    isoDuration = String.format("P%dY%dM%dDT%dH%dM%0.9fS", years, months, days, hours, minutes, secFractional);
+                    isoDuration = String.format("P%dY%dM%dDT%dH%dM%d%.9fS", years, months, days, hours, minutes, seconds, secFractional);
                 }
             }
 
