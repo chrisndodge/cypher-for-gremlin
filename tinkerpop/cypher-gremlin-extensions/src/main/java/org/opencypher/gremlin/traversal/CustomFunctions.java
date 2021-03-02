@@ -564,9 +564,6 @@ public final class CustomFunctions {
                 if (weeks > 0) {
                     isoDuration = String.format("P%dW", weeks);
                 } else {
-                    Long years = map.containsKey("years") ? map.get("years") : 0L;
-                    Long months = map.containsKey("months") ? map.get("months") : 0L;
-                    Long days = map.containsKey("days") ? map.get("days") : 0L;
                     Long hours = map.containsKey("hours") ? map.get("hours") : 0L;
                     Long minutes = map.containsKey("minutes") ? map.get("minutes") : 0L;
                     Long seconds = map.containsKey("seconds") ? map.get("seconds") : 0L;
@@ -578,7 +575,9 @@ public final class CustomFunctions {
                         (microseconds.doubleValue() / (1000.0D * 1000.0D)) + 
                         (nanoseconds.doubleValue() / (1000.0D * 1000.0D * 1000.0D));
 
-                    isoDuration = String.format("P%dY%dM%dDT%dH%dM%d%.9fS", years, months, days, hours, minutes, seconds, secFractional);
+                    isoDuration = String.format("PT%dH%dM%d%.9fS", hours, minutes, seconds, secFractional);
+
+                    throw new IllegalArgumentException("Going to duraton parse " + isoDuration);
                 }
             }
 
