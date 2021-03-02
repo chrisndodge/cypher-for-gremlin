@@ -579,7 +579,7 @@ public final class CustomFunctions {
                         (microseconds.doubleValue() / (1000.0D * 1000.0D)) + 
                         (nanoseconds.doubleValue() / (1000.0D * 1000.0D * 1000.0D));
 
-                    isoDuration = String.format("P%dY%dM%dT%dH%dM%.9fS", years, months, days, hours, minutes, secFractional);
+                    isoDuration = String.format("P%dY%dM%dDT%dH%dM%0.9fS", years, months, days, hours, minutes, secFractional);
                 }
             }
 
