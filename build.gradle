@@ -8,6 +8,8 @@ buildscript {
         scalaVersion = '2.12'
         scalaPatchVersion = '7'
         tinkerpopVersion = '3.4.3'
+        jodatimeVersion = '2.10.10'
+
         tckVersion = '1.0.0-M13'
         githubProject = "opencypher/cypher-for-gremlin"
         tagPrefix = 'v'
@@ -135,6 +137,7 @@ project(':tinkerpop:cypher-gremlin-extensions') {
 
     dependencies {
         compile "org.apache.tinkerpop:gremlin-core:${tinkerpopVersion}"
+        compile "joda-time:joda-time:${jodatimeVersion}"
     }
 }
 

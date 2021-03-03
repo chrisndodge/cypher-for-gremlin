@@ -19,6 +19,8 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
+import org.joda.time.Period;
+
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
@@ -560,29 +562,31 @@ public final class CustomFunctions {
                 isoDuration = (String)arg;
             } else if (arg instanceof Map<?, ?>) {
                 Map<String, Long> map = (Map<String, Long>) arg;
+                
+                Long years = map.containsKey("years") ? map.get("years") : 0L;
+                Long months = map.containsKey("months") ? map.get("months") : 0L;
                 Long weeks = map.containsKey("weeks") ? map.get("weeks") : 0L;
-                if (weeks > 0) {
-                    isoDuration = String.format("P%dW", weeks);
-                } else {
-                    Long hours = map.containsKey("hours") ? map.get("hours") : 0L;
-                    Long minutes = map.containsKey("minutes") ? map.get("minutes") : 0L;
-                    Long seconds = map.containsKey("seconds") ? map.get("seconds") : 0L;
-                    Long milliseconds = map.containsKey("milliseconds") ? map.get("milliseconds") : 0L;
-                    Long microseconds = map.containsKey("microseconds") ? map.get("microseconds") : 0L;
-                    Long nanoseconds = map.containsKey("nanoseconds") ? map.get("nanoseconds") : 0L;
+                Long days = map.containsKey("days") ? map.get("days") : 0L;
+                Long hours = map.containsKey("hours") ? map.get("hours") : 0L;
+                Long minutes = map.containsKey("minutes") ? map.get("minutes") : 0L;
+                Long seconds = map.containsKey("seconds") ? map.get("seconds") : 0L;
+                Long milliseconds = map.containsKey("milliseconds") ? map.get("milliseconds") : 0L;
+                Long microseconds = map.containsKey("microseconds") ? map.get("microseconds") : 0L;
+                Long nanoseconds = map.containsKey("nanoseconds") ? map.get("nanoseconds") : 0L;
 
-                    Double secFractional = seconds.doubleValue() + 
-                        (milliseconds.doubleValue() / 1000.0D) + 
-                        (microseconds.doubleValue() / (1000.0D * 1000.0D)) + 
-                        (nanoseconds.doubleValue() / (1000.0D * 1000.0D * 1000.0D));
+                // Java Duration class can 
+                // days += weeks * 7L;
+                // hours += days * 24L;
 
-                    isoDuration = String.format("PT%dH%dM%.9fS", hours, minutes, secFractional);
+                Double secFractional = seconds.doubleValue() + 
+                    (milliseconds.doubleValue() / 1000.0D) + 
+                    (microseconds.doubleValue() / (1000.0D * 1000.0D)) + 
+                    (nanoseconds.doubleValue() / (1000.0D * 1000.0D * 1000.0D));
 
-                    // throw new IllegalArgumentException("Going to duraton parse " + isoDuration);
-                }
+                isoDuration = String.format("P%dDT%dH%dM%.9fS", days, hours, minutes, secFractional);
             }
 
-            return Duration.parse(isoDuration);
+            return Period.parse(isoDuration);
         };
     }
 
