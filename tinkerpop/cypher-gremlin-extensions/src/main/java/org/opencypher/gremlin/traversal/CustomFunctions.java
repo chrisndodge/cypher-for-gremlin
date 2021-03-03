@@ -23,6 +23,7 @@ import org.joda.time.Period;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
@@ -225,6 +226,23 @@ public final class CustomFunctions {
                 Element element = (Element) container;
                 String key = (String) index;
                 return element.property(key).orElse(Tokens.NULL);
+            }
+
+            if (container instanceof DateTime) {
+                if (!(index instanceof String)) {
+                    String indexClass = index.getClass().getName();
+                    throw new IllegalArgumentException("Property access by non-string: " + indexClass);
+                }
+                String fieldName = (String) index;
+                try {
+                    Field field = container.getClass().getDeclaredField(fieldName);
+                    field.setAccessible(true);
+                    Object value = field.get(container);
+                    return (value != null) ? value : Tokens.NULL;
+
+                } catch(NoSuchFieldException | IllegalAccessException ex) {
+                    throw new IllegalArgumentException("Invalid property access of " + container.getClass().getName());
+                }
             }
 
             String containerClass = container.getClass().getName();
