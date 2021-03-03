@@ -20,6 +20,8 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 import org.joda.time.Period;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -544,9 +546,18 @@ public final class CustomFunctions {
     * SAMOS SPECIFIC DATE/TIME CUSTOM FUNCTIONS
     *
     */
+
+    /*
     public static Function<Traverser,Object> cypherUtcNow() {
         return traverser -> {
             return Date.from(Instant.now());
+        };
+    }
+    */
+
+    public static Function<Traverser,Object> cypherUtcNow() {
+        return traverser -> {
+            return new DateTime(DateTimeZone.UTC);
         };
     }
 
