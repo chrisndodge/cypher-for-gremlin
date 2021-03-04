@@ -20,6 +20,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -402,6 +403,11 @@ public final class CustomFunctions {
                 return Date.from(((Date)a).toInstant().plus(((Duration)b).toMillis()/1000, ChronoUnit.SECONDS));
             }
 
+            if (a instanceof Date && b instanceof Period) {
+                DateTime d = new DateTime((Date)a);
+                return d.plus((Period) b).toDate();
+            }
+
             if (!(a instanceof String || a instanceof Number) ||
                 !(b instanceof String || b instanceof Number)) {
                 throw new TypeException("Illegal use of plus operator");
@@ -429,6 +435,11 @@ public final class CustomFunctions {
             // right now we only extend the minus operator to cover date - duration types
             if (a instanceof Date && b instanceof Duration) {
                 return Date.from(((Date)a).toInstant().minus(((Duration)b).toMillis()/1000, ChronoUnit.SECONDS));
+            }
+
+            if (a instanceof Date && b instanceof Period) {
+                DateTime d = new DateTime((Date)a);
+                return d.minus((Period) b).toDate();
             }
 
             if (!(a instanceof String || a instanceof Number) ||
@@ -620,10 +631,38 @@ public final class CustomFunctions {
                     (microseconds.doubleValue() / (1000.0D * 1000.0D)) + 
                     (nanoseconds.doubleValue() / (1000.0D * 1000.0D * 1000.0D));
 
-                isoDuration = String.format("PT%.9fS", days, hours, minutes, seconds);
+                isoDuration = String.format("PT%.9fS", seconds);
             }
 
             return Duration.parse(isoDuration);
+        };
+    }
+
+    public static Function<Traverser, Object> cypherPeriod() {
+        return traverser -> {
+            Object arg = traverser.get();
+            String isoDuration = "";
+            if (arg instanceof String) {
+                return Period.parse((String) arg);
+            } else if (arg instanceof Map<?, ?>) {
+                Map<String, Long> map = (Map<String, Long>) arg;
+               
+                Long years = map.containsKey("years") ? map.get("years") : 0L;
+                Long months = map.containsKey("months") ? map.get("months") : 0L; 
+                Long weeks = map.containsKey("weeks") ? map.get("weeks") : 0L;
+                Long days = map.containsKey("days") ? map.get("days") : 0L;
+                Long hours = map.containsKey("hours") ? map.get("hours") : 0L;
+                Long minutes = map.containsKey("minutes") ? map.get("minutes") : 0L;
+                Long seconds = map.containsKey("seconds") ? map.get("seconds") : 0L;
+                Long milliseconds = map.containsKey("milliseconds") ? map.get("milliseconds") : 0L;
+
+                return new Period(
+                    years.intValue(), months.intValue(), weeks.intValue(), days.intValue(),
+                    hours.intValue(), minutes.intValue(), seconds.intValue(), milliseconds.intValue()
+                );
+            }
+
+            throw new TypeException("DURATION() must be passed in a string or map type");            
         };
     }
 
@@ -744,7 +783,7 @@ public final class CustomFunctions {
                 Integer millisecond = map.containsKey("millisecond") ? ((Long)map.get("millisecond")).intValue() : 0;
 
                 c.set(year, month-1, day, hour, minute, second); // the library month starts at 0, but user expects start at 1
-                c.set(Calendar.MILLISECOND, 0);
+                c.set(Calendar.MILLISECOND, millisecond);
 
                 return c.getTime();
             } else if (arg instanceof String) {
