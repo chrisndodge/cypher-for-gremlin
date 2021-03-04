@@ -49,6 +49,7 @@ import org.opencypher.gremlin.translation.exception.ConstraintException;
 import org.opencypher.gremlin.translation.exception.CypherExceptions;
 import org.opencypher.gremlin.translation.exception.TypeException;
 
+
 @SuppressWarnings({"unchecked", "WeakerAccess", "ArraysAsListWithZeroOrOneArgument"})
 public final class CustomFunctions {
     private static SimpleDateFormat yearDateFormat = new SimpleDateFormat("YYYY");
@@ -123,10 +124,16 @@ public final class CustomFunctions {
             Object arg = tokenToNull(traverser.get());
             boolean valid = arg == null ||
                 arg instanceof Number ||
-                arg instanceof String;
+                arg instanceof String ||
+                arg instanceof Period;
             if (!valid) {
                 String className = arg.getClass().getName();
                 throw new TypeException("Cannot convert " + className + " to integer");
+            }
+
+            if (arg instanceof Period) {
+                // return milliseconds of duration
+                ((Period) arg).toStandardDuration().getMillis();
             }
 
             return nullToToken(
@@ -453,7 +460,7 @@ public final class CustomFunctions {
             }
 
             if (a instanceof Date && b instanceof Date) {
-                return new Period(new DateTime((Date) a), new DateTime((Date) b));
+                return new Period(new DateTime((Date) b), new DateTime((Date) a));
             }
 
             if (!(a instanceof String || a instanceof Number) ||
