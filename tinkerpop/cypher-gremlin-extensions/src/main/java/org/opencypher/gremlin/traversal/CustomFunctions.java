@@ -741,11 +741,14 @@ public final class CustomFunctions {
                 Integer hour = map.containsKey("hour") ? ((Long)map.get("hour")).intValue() : 0;
                 Integer minute = map.containsKey("minute") ? ((Long)map.get("minute")).intValue() : 0;
                 Integer second = map.containsKey("second") ? ((Long)map.get("second")).intValue() : 0;
+                Integer millisecond = map.containsKey("millisecond") ? ((Long)map.get("millisecond")).intValue() : 0;
 
-                c.set(year, month, day, hour, minute, second);
+                c.set(year, month-1, day, hour, minute, second); // the library month starts at 0, but user expects start at 1
+                c.set(Calendar.MILLISECOND, 0);
+
                 return c.getTime();
             } else if (arg instanceof String) {
-                DateTime.parse((String) arg).toDate();
+                return DateTime.parse((String) arg).toDate();
             }
 
             throw new TypeException("DATE() must be passed in a string or map type");
