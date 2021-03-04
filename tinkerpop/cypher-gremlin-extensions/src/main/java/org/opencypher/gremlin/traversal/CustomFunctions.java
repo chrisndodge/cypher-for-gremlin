@@ -19,15 +19,12 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-//import org.joda.time.Period;
-//import org.joda.time.DateTime;
-//import org.joda.time.DateTimeZone;
+import org.joda.time.DateTime;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -60,6 +57,7 @@ public final class CustomFunctions {
     private static SimpleDateFormat hourDateFormat = new SimpleDateFormat("HH");
     private static SimpleDateFormat minuteDateFormat = new SimpleDateFormat("mm");
     private static SimpleDateFormat secondDateFormat = new SimpleDateFormat("ss");
+    private static SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     private CustomFunctions() {
     }
@@ -575,7 +573,8 @@ public final class CustomFunctions {
 
     public static Function<Traverser,Object> cypherNow() {
         return traverser -> {
-            return LocalDate.now();
+            // return server localtime
+            return Calendar.getInstance().getTime();
         };
     }
 
@@ -720,6 +719,44 @@ public final class CustomFunctions {
             a -> CustomFunctions.secondDateFormat.format((Date) a.get(0)), 
             Date.class
         );
+    }
+
+    public static Function<Traverser,Object> cypherDate() {
+        return traverser -> {
+            List<?> args = (List<?>) traverser.get();
+            if (args.size() != 1) {
+                throw new TypeException("Incorrect number of arguments. Usage: DATE(string | map)");
+            }            
+
+            Object arg = args.get(0);
+            if (arg instanceof Map<?, ?>) {
+                Map<String, Long> map = (Map<String, Long>) arg;
+                Calendar c = Calendar.getInstance();
+
+                Integer year = map.containsKey("year") ? ((Long)map.get("year")).intValue() : 1;
+
+                Integer week = map.containsKey("week") ? ((Long)map.get("week")).intValue() : 0;
+                Integer dayOfWeek = map.containsKey("dayOfWeek") ? ((Long)map.get("dayOfWeek")).intValue() : 0;
+
+                if (week > 0) {
+                    c.setWeekDate(year, week, dayOfWeek);
+                    return c.getTime();
+                }
+
+                Integer month = map.containsKey("month") ? ((Long)map.get("month")).intValue() : 1; 
+                Integer day = map.containsKey("day") ? ((Long)map.get("day")).intValue() : 1;
+                Integer hour = map.containsKey("hour") ? ((Long)map.get("hour")).intValue() : 0;
+                Integer minute = map.containsKey("minute") ? ((Long)map.get("minute")).intValue() : 0;
+                Integer second = map.containsKey("second") ? ((Long)map.get("second")).intValue() : 0;
+
+                c.set(year, month, day, hour, minute, second);
+                return c.getTime();
+            } else if (arg instanceof String) {
+                DateTime.parse((String) arg).toDate();
+            }
+
+            throw new TypeException("DATE() must be passed in a string or map type");
+        };
     }
 
     public static Function<Traverser,Object> cypherTruncateDate() {
