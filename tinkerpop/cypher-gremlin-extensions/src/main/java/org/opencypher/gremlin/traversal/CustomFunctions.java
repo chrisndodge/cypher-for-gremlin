@@ -133,7 +133,7 @@ public final class CustomFunctions {
 
             if (arg instanceof Period) {
                 // return milliseconds of duration
-                ((Period) arg).toStandardDuration().getMillis();
+                return ((Period) arg).toStandardDuration().getMillis();
             }
 
             return nullToToken(
