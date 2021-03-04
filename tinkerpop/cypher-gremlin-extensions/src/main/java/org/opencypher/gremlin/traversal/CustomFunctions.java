@@ -571,13 +571,6 @@ public final class CustomFunctions {
         };
     }
 
-    public static Function<Traverser,Object> cypherNow() {
-        return traverser -> {
-            // return server localtime
-            return Calendar.getInstance().getTime();
-        };
-    }
-
     /*
     public static Function<Traverser,Object> cypherUtcNow() {
         return traverser -> {

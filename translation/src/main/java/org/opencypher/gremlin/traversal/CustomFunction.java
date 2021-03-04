@@ -191,10 +191,10 @@ public class CustomFunction {
         );
     }
 
-    public static CustomFunction cypherNow() {
+    public static CustomFunction cypherDate() {
         return new CustomFunction(
-            "cypherNow",
-            CustomFunctions.cypherNow()
+            "cypherDate",
+            CustomFunctions.cypherDate()
         );
     }
 

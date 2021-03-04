@@ -267,7 +267,7 @@ private class ExpressionWalker[T, P](context: WalkerContext[T, P], g: GremlinSte
           case "tostring"         => traversals.head.map(CustomFunction.cypherToString())
           case "gremlin"          => injectGremlin(args)
           case "utcnow"           => asList().map(CustomFunction.cypherUtcNow())
-          case "now"              => asList().map(CustomFunction.cypherNow())
+          case "date"             => asList(args(0)).map(CustomFunction.cypherDate())
           case "year"             => traversals.head.map(CustomFunction.cypherYear())
           case "month"            => traversals.head.map(CustomFunction.cypherMonth())
           case "day"              => traversals.head.map(CustomFunction.cypherDay())
