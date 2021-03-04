@@ -278,6 +278,7 @@ private class ExpressionWalker[T, P](context: WalkerContext[T, P], g: GremlinSte
           case "dateadd"          => asList(args(0), args(1), args(2), args(3), args(4), args(5), args(6)).map(CustomFunction.cypherDateAdd())
           case "truncate_date"    => asList(args(0), args(1)).map(CustomFunction.cypherTruncateDate())
           case "duration"         => traversals.head.map(CustomFunction.cypherDuration())
+          case "period"         => traversals.head.map(CustomFunction.cypherPeriod())
           case _ =>
             throw new SyntaxException(s"Unknown function '$fnName'")
         }

@@ -205,6 +205,13 @@ public class CustomFunction {
         );
     }
 
+    public static CustomFunction cypherPeriod() {
+        return new CustomFunction(
+            "cypherPeriod",
+            CustomFunctions.cypherPeriod()
+        );
+    }
+
     public static CustomFunction cypherDateAdd() {
         return new CustomFunction(
             "cypherDateAdd",
