@@ -212,13 +212,6 @@ public class CustomFunction {
         );
     }
 
-    public static CustomFunction cypherDateAdd() {
-        return new CustomFunction(
-            "cypherDateAdd",
-            CustomFunctions.cypherDateAdd()
-        );
-    }
-
     public static CustomFunction cypherYear() {
         return new CustomFunction(
             "cypherYear",

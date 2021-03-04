@@ -442,6 +442,10 @@ public final class CustomFunctions {
                 return d.minus((Period) b).toDate();
             }
 
+            if (a instanceof Date && b instanceof Date) {
+                return new Period(new DateTime((Date) a), new DateTime((Date) b));
+            }
+
             if (!(a instanceof String || a instanceof Number) ||
                 !(b instanceof String || b instanceof Number)) {
                 throw new TypeException("Illegal use of minus operator");
@@ -665,44 +669,6 @@ public final class CustomFunctions {
             throw new TypeException("DURATION() must be passed in a string or map type");            
         };
     }
-
-    public static Function<Traverser,Object> cypherDateAdd() {
-        return traverser -> {
-            List<?> args = (List<?>) traverser.get();
-            if (args.size() != 7) {
-                throw new TypeException("Incorrect number of arguments. Usage: dateadd(date, years, months, days, hours, minutes, seconds)");
-            }
-            Date theDate = (Date) args.get(0);
-            Long years = (Long) args.get(1);
-            Long months = (Long) args.get(2);
-            Long days = (Long) args.get(3);
-            Long hours = (Long) args.get(4);
-            Long minutes = (Long) args.get(5);
-            Long seconds = (Long) args.get(6);
-
-            Calendar c = Calendar.getInstance();
-            c.setTime(theDate);
-
-            // Perform addition/subtraction
-            c.add(Calendar.YEAR, years.intValue());
-            c.add(Calendar.MONTH, months.intValue());
-            c.add(Calendar.DATE, days.intValue());
-            c.add(Calendar.HOUR, hours.intValue());
-            c.add(Calendar.MINUTE, minutes.intValue());
-            c.add(Calendar.SECOND, seconds.intValue());
-
-            // Convert calendar back to Date
-            return c.getTime();
-        };
-    }
-
-    
-    /*public static Function<Traverser,Object> cypherYear() {
-        return cypherFunction(a -> {
-            LocalDate localDate = ((Date) a).toInstant().atZone(ZoneId.of("UTC")).toLocalDate();
-            return localDate.getYear();
-        }, Date.class);
-    }*/
 
     public static Function<Traverser,Object> cypherYear() {
         return cypherFunction(
