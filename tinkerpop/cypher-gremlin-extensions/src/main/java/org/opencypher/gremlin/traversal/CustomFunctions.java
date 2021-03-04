@@ -19,9 +19,9 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-import org.joda.time.Period;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+//import org.joda.time.Period;
+//import org.joda.time.DateTime;
+//import org.joda.time.DateTimeZone;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -35,6 +35,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LocalDate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -228,6 +229,7 @@ public final class CustomFunctions {
                 return element.property(key).orElse(Tokens.NULL);
             }
 
+            /*
             if (container instanceof DateTime) {
                 if (!(index instanceof String)) {
                     String indexClass = index.getClass().getName();
@@ -244,6 +246,7 @@ public final class CustomFunctions {
                     throw new IllegalArgumentException("Invalid property access of " + container.getClass().getName());
                 }
             }
+            */
 
             String containerClass = container.getClass().getName();
             if (index instanceof String) {
@@ -565,19 +568,25 @@ public final class CustomFunctions {
     *
     */
 
-    /*
     public static Function<Traverser,Object> cypherUtcNow() {
         return traverser -> {
             return Date.from(Instant.now());
         };
     }
-    */
 
+    public static Function<Traverser,Object> cypherNow() {
+        return traverser -> {
+            return LocalDate.now();
+        };
+    }
+
+    /*
     public static Function<Traverser,Object> cypherUtcNow() {
         return traverser -> {
             return new DateTime(DateTimeZone.UTC);
         };
     }
+    */
 
     private static <K, V> V getOrDefault(Map<K,V> map, K key, V defaultValue) {
         return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -590,32 +599,40 @@ public final class CustomFunctions {
             if (arg instanceof String) {
                 isoDuration = (String)arg;
             } else if (arg instanceof Map<?, ?>) {
-                Map<String, Long> map = (Map<String, Long>) arg;
-                
-                Long years = map.containsKey("years") ? map.get("years") : 0L;
-                Long months = map.containsKey("months") ? map.get("months") : 0L;
-                Long weeks = map.containsKey("weeks") ? map.get("weeks") : 0L;
-                Long days = map.containsKey("days") ? map.get("days") : 0L;
-                Long hours = map.containsKey("hours") ? map.get("hours") : 0L;
-                Long minutes = map.containsKey("minutes") ? map.get("minutes") : 0L;
-                Long seconds = map.containsKey("seconds") ? map.get("seconds") : 0L;
-                Long milliseconds = map.containsKey("milliseconds") ? map.get("milliseconds") : 0L;
-                Long microseconds = map.containsKey("microseconds") ? map.get("microseconds") : 0L;
-                Long nanoseconds = map.containsKey("nanoseconds") ? map.get("nanoseconds") : 0L;
+                Map<String, Double> map = (Map<String, Double>) arg;
+               
+                Double years = map.containsKey("years") ? map.get("years") : 0.0D;
+                Double quarters = map.containsKey("quarters") ? map.get("quarters") : 0.0D;
+                Double months = map.containsKey("months") ? map.get("months") : 0.0D; 
+                Double weeks = map.containsKey("weeks") ? map.get("weeks") : 0.0D;
+                Double days = map.containsKey("days") ? map.get("days") : 0.0D;
+                Double hours = map.containsKey("hours") ? map.get("hours") : 0.0D;
+                Double minutes = map.containsKey("minutes") ? map.get("minutes") : 0.0D;
+                Double seconds = map.containsKey("seconds") ? map.get("seconds") : 0.0D;
+                Double milliseconds = map.containsKey("milliseconds") ? map.get("milliseconds") : 0.0D;
+                Double microseconds = map.containsKey("microseconds") ? map.get("microseconds") : 0.0D;
+                Double nanoseconds = map.containsKey("nanoseconds") ? map.get("nanoseconds") : 0.0D;
 
-                // Java Duration class can 
-                // days += weeks * 7L;
-                // hours += days * 24L;
+                quarters += years * 4.0D;
+                months += quarters * 3.0D;
 
-                Double secFractional = seconds.doubleValue() + 
-                    (milliseconds.doubleValue() / 1000.0D) + 
+                // 30.4375 days in a month tries to account for the average considering different days in month:
+                // >>> (31 + 28.25 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31) / 12
+                //      30.4375
+                days += months * 30.4375D;
+                days += weeks * 7.0D;
+                hours += days * 24.0D;
+                minutes += hours * 60.0D;
+                seconds += minutes * 60.0D;
+
+                seconds += (milliseconds.doubleValue() / 1000.0D) + 
                     (microseconds.doubleValue() / (1000.0D * 1000.0D)) + 
                     (nanoseconds.doubleValue() / (1000.0D * 1000.0D * 1000.0D));
 
-                isoDuration = String.format("P%dDT%dH%dM%.9fS", days, hours, minutes, secFractional);
+                isoDuration = String.format("PT%.9fS", days, hours, minutes, seconds);
             }
 
-            return Period.parse(isoDuration);
+            return Duration.parse(isoDuration);
         };
     }
 

@@ -191,6 +191,13 @@ public class CustomFunction {
         );
     }
 
+    public static CustomFunction cypherNow() {
+        return new CustomFunction(
+            "cypherNow",
+            CustomFunctions.cypherNow()
+        );
+    }
+
     public static CustomFunction cypherDuration() {
         return new CustomFunction(
             "cypherDuration",
