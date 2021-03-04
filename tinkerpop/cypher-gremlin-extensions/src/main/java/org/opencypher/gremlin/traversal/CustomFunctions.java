@@ -69,10 +69,20 @@ public final class CustomFunctions {
             boolean valid = arg == null ||
                 arg instanceof Boolean ||
                 arg instanceof Number ||
-                arg instanceof String;
+                arg instanceof String ||
+                arg instanceof Period ||
+                arg instanceof Date;
             if (!valid) {
                 String className = arg.getClass().getName();
                 throw new TypeException("Cannot convert " + className + " to string");
+            }
+
+            if (arg instanceof Period) {
+                return ((Period)arg).toString();
+            }
+
+            if (arg instanceof Date) {
+                return (new DateTime((Date) arg)).toString();
             }
 
             return Optional.ofNullable(arg)
