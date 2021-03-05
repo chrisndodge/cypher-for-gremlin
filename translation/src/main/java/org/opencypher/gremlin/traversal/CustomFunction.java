@@ -204,63 +204,6 @@ public class CustomFunction {
             CustomFunctions.cypherDuration()
         );
     }
-
-    public static CustomFunction cypherPeriod() {
-        return new CustomFunction(
-            "cypherPeriod",
-            CustomFunctions.cypherPeriod()
-        );
-    }
-
-    public static CustomFunction cypherYear() {
-        return new CustomFunction(
-            "cypherYear",
-            CustomFunctions.cypherYear()
-        );
-    }
-
-    
-    public static CustomFunction cypherMonth() {
-        return new CustomFunction(
-            "cypherMonth",
-            CustomFunctions.cypherMonth()
-        );
-    }
-
-    public static CustomFunction cypherDay() {
-        return new CustomFunction(
-            "cypherDay",
-            CustomFunctions.cypherDay()
-        );
-    }
-
-    public static CustomFunction cypherDayOfYear() {
-        return new CustomFunction(
-            "cypherDayOfYear",
-            CustomFunctions.cypherDayOfYear()
-        );
-    }
-
-    public static CustomFunction cypherHour() {
-        return new CustomFunction(
-            "cypherHour",
-            CustomFunctions.cypherHour()
-        );
-    }
-
-    public static CustomFunction cypherMinute() {
-        return new CustomFunction(
-            "cypherMinute",
-            CustomFunctions.cypherMinute()
-        );
-    }
-
-    public static CustomFunction cypherSecond() {
-        return new CustomFunction(
-            "cypherSecond",
-            CustomFunctions.cypherSecond()
-        );
-    }
     
     public static CustomFunction cypherTruncateDate() {
         return new CustomFunction(

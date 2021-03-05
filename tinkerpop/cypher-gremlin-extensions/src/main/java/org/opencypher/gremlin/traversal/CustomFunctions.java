@@ -159,10 +159,17 @@ public final class CustomFunctions {
             Object arg = tokenToNull(traverser.get());
             boolean valid = arg == null ||
                 arg instanceof Number ||
-                arg instanceof String;
+                arg instanceof String ||
+                arg instanceof Period;
             if (!valid) {
                 String className = arg.getClass().getName();
                 throw new TypeException("Cannot convert " + className + " to float");
+            }
+
+            if (arg instanceof Period) {
+                // return seconds (and fractional seconds) of duration
+                Long millis = ((Period) arg).toStandardDuration().getMillis();
+                return (millis.doubleValue())/1000.0D;
             }
 
             return nullToToken(
@@ -244,8 +251,7 @@ public final class CustomFunctions {
                 return element.property(key).orElse(Tokens.NULL);
             }
 
-            /*
-            if (container instanceof DateTime) {
+            if (container instanceof DateTimeWrapper) {
                 if (!(index instanceof String)) {
                     String indexClass = index.getClass().getName();
                     throw new IllegalArgumentException("Property access by non-string: " + indexClass);
@@ -261,7 +267,6 @@ public final class CustomFunctions {
                     throw new IllegalArgumentException("Invalid property access of " + container.getClass().getName());
                 }
             }
-            */
 
             String containerClass = container.getClass().getName();
             if (index instanceof String) {
@@ -603,63 +608,11 @@ public final class CustomFunctions {
         };
     }
 
-    /*
-    public static Function<Traverser,Object> cypherUtcNow() {
-        return traverser -> {
-            return new DateTime(DateTimeZone.UTC);
-        };
-    }
-    */
-
     private static <K, V> V getOrDefault(Map<K,V> map, K key, V defaultValue) {
         return map.containsKey(key) ? map.get(key) : defaultValue;
     }
 
-    public static Function<Traverser,Object> cypherDuration() {
-        return traverser -> {
-            Object arg = traverser.get();
-            String isoDuration = "";
-            if (arg instanceof String) {
-                isoDuration = (String)arg;
-            } else if (arg instanceof Map<?, ?>) {
-                Map<String, Double> map = (Map<String, Double>) arg;
-               
-                Double years = map.containsKey("years") ? map.get("years") : 0.0D;
-                Double quarters = map.containsKey("quarters") ? map.get("quarters") : 0.0D;
-                Double months = map.containsKey("months") ? map.get("months") : 0.0D; 
-                Double weeks = map.containsKey("weeks") ? map.get("weeks") : 0.0D;
-                Double days = map.containsKey("days") ? map.get("days") : 0.0D;
-                Double hours = map.containsKey("hours") ? map.get("hours") : 0.0D;
-                Double minutes = map.containsKey("minutes") ? map.get("minutes") : 0.0D;
-                Double seconds = map.containsKey("seconds") ? map.get("seconds") : 0.0D;
-                Double milliseconds = map.containsKey("milliseconds") ? map.get("milliseconds") : 0.0D;
-                Double microseconds = map.containsKey("microseconds") ? map.get("microseconds") : 0.0D;
-                Double nanoseconds = map.containsKey("nanoseconds") ? map.get("nanoseconds") : 0.0D;
-
-                quarters += years * 4.0D;
-                months += quarters * 3.0D;
-
-                // 30.4375 days in a month tries to account for the average considering different days in month:
-                // >>> (31 + 28.25 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31) / 12
-                //      30.4375
-                days += months * 30.4375D;
-                days += weeks * 7.0D;
-                hours += days * 24.0D;
-                minutes += hours * 60.0D;
-                seconds += minutes * 60.0D;
-
-                seconds += (milliseconds.doubleValue() / 1000.0D) + 
-                    (microseconds.doubleValue() / (1000.0D * 1000.0D)) + 
-                    (nanoseconds.doubleValue() / (1000.0D * 1000.0D * 1000.0D));
-
-                isoDuration = String.format("PT%.9fS", seconds);
-            }
-
-            return Duration.parse(isoDuration);
-        };
-    }
-
-    public static Function<Traverser, Object> cypherPeriod() {
+    public static Function<Traverser, Object> cypherDuration() {
         return traverser -> {
             Object arg = traverser.get();
             String isoDuration = "";
@@ -685,55 +638,6 @@ public final class CustomFunctions {
 
             throw new TypeException("DURATION() must be passed in a string or map type");            
         };
-    }
-
-    public static Function<Traverser,Object> cypherYear() {
-        return cypherFunction(
-            a -> CustomFunctions.yearDateFormat.format((Date) a.get(0)), 
-            Date.class
-        );
-    }
-
-    public static Function<Traverser,Object> cypherMonth() {
-        return cypherFunction(
-            a -> CustomFunctions.monthDateFormat.format((Date) a.get(0)), 
-            Date.class
-        );
-    }
-
-    public static Function<Traverser,Object> cypherDay() {
-        return cypherFunction(
-            a -> CustomFunctions.dayDateFormat.format((Date) a.get(0)), 
-            Date.class
-        );
-    }
-
-    public static Function<Traverser,Object> cypherDayOfYear() {
-        return cypherFunction(
-            a -> CustomFunctions.dayOfYearDateFormat.format((Date) a.get(0)), 
-            Date.class
-        );
-    }
-
-    public static Function<Traverser,Object> cypherHour() {
-        return cypherFunction(
-            a -> CustomFunctions.hourDateFormat.format((Date) a.get(0)), 
-            Date.class
-        );
-    }
-
-    public static Function<Traverser,Object> cypherMinute() {
-        return cypherFunction(
-            a -> CustomFunctions.minuteDateFormat.format((Date) a.get(0)), 
-            Date.class
-        );
-    }
-
-    public static Function<Traverser,Object> cypherSecond() {
-        return cypherFunction(
-            a -> CustomFunctions.secondDateFormat.format((Date) a.get(0)), 
-            Date.class
-        );
     }
 
     public static Function<Traverser,Object> cypherDate() {
