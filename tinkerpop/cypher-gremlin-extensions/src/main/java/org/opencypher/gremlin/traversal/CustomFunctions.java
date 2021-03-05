@@ -251,6 +251,7 @@ public final class CustomFunctions {
                 return element.property(key).orElse(Tokens.NULL);
             }
 
+            /*
             if (container instanceof DateTimeWrapper) {
                 if (!(index instanceof String)) {
                     String indexClass = index.getClass().getName();
@@ -267,6 +268,7 @@ public final class CustomFunctions {
                     throw new IllegalArgumentException("Invalid property access of " + container.getClass().getName());
                 }
             }
+            */
 
             String containerClass = container.getClass().getName();
             if (index instanceof String) {
@@ -616,9 +618,7 @@ public final class CustomFunctions {
         return traverser -> {
             Object arg = traverser.get();
             String isoDuration = "";
-            if (true) {
-                return new DateTimeWrapper();
-            }
+
             if (arg instanceof String) {
                 return Period.parse((String) arg);
             } else if (arg instanceof Map<?, ?>) {
