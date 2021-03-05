@@ -616,6 +616,9 @@ public final class CustomFunctions {
         return traverser -> {
             Object arg = traverser.get();
             String isoDuration = "";
+            if (true) {
+                return new DateTimeWrapper();
+            }
             if (arg instanceof String) {
                 return Period.parse((String) arg);
             } else if (arg instanceof Map<?, ?>) {
